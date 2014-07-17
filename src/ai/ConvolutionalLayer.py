@@ -43,6 +43,7 @@ class ConvolutionalLayer(object):
 
         #: we need to define the interval at which we initialize the weights. We use formula from example
         W_bound = np.sqrt(6. / (self.fan_in + self.fan_out))
+        # I think it's harmless, but the 6 is supposed to go outside the sqrt.
 
         #: initialize weights with random weights
         self.W = theano.shared(np.asarray(np.random.uniform(high=W_bound, low=-W_bound, size=filter_shape), dtype=theano.config.floatX),
