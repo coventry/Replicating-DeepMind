@@ -38,7 +38,7 @@ class NeuralNet:
         second_conv_input_shape = [input_shape[0], filter_shapes[0][0], self.layer_hidden_conv1.feature_map_size,
                                    self.layer_hidden_conv1.feature_map_size]
         self.layer_hidden_conv2 = ConvolutionalLayer(self.layer_hidden_conv1.output, filter_shapes[1],
-                                                     image_shape=second_conv_input_shape, stride=2)
+                                                     image_shape=second_conv_input_shape, stride=2) # Drops use of strides
 
         #output from convolutional layer is 4D, but normal hidden layer expects 2D. Because of all to all connections
         # 3rd hidden layer does not care from which feature map or from which position the input comes from
