@@ -118,6 +118,9 @@ class NeuralNet:
         one transition (prestate,action,reward,poststate)
         """
 
+        # XXX This is doing one update per minibatch element, which is not
+        # the way minibatches are supposed to work.
+
         #: we have a new, better estimation for the Q-val of the action we chose, it is the sum of the reward
         #  received on transition and the maximum of future rewards. Q-s for other actions remain the same.
         for i, transition in enumerate(minibatch):
