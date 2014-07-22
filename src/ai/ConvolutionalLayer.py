@@ -8,7 +8,7 @@ Creates one convolutional layer
 import theano
 import numpy as np
 from theano.tensor.nnet import conv
-
+from theano.sandbox.cuda import fftconv
 
 class ConvolutionalLayer(object):
 
@@ -47,15 +47,17 @@ class ConvolutionalLayer(object):
 
         #: initialize weights with random weights
         self.W = theano.shared(np.asarray(np.random.uniform(high=W_bound, low=-W_bound, size=filter_shape), dtype=theano.config.floatX),
-                               borrow=True)
+                               borrow=True, name='Convolutional_W')
 
         #: the bias is a 1D vector -- one bias per output feature map
         b_values = np.zeros((filter_shape[0],), dtype=theano.config.floatX)
-        self.b = theano.shared(value=b_values, borrow=True)
+        self.b = theano.shared(value=b_values, borrow=True, name='Convolutional_b')
 
         #: convolve input feature maps with filters
         convolution_output = conv.conv2d(input=input_images, filters=self.W, filter_shape=filter_shape,
-                                         image_shape=image_shape, subsample=(stride , stride))
+                                                image_shape=image_shape, subsample=(stride , stride)
+                                                )
+        # subsampled = convolution_output[::stride, ::stride]
 
         #: Since the bias is a vector (1D array), we need first
         #  reshape it to a tensor of shape (1,n_filters,1,1) using dimshuffle
