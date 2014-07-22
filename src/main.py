@@ -7,7 +7,12 @@ This is the main class where all thing are put together
 from ai.NeuralNet import NeuralNet
 from memory.memoryd import MemoryD
 from ale.ale import ALE
-import random
+import random, os, cPickle, time
+
+for direction in ['in', 'out']:
+    path = 'ale_fifo_' + direction
+    if os.path.exists(path):
+        os.remove(path)
 
 
 class Main:
