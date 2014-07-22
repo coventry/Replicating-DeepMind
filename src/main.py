@@ -81,18 +81,29 @@ class Main:
             # Play until game is over
             while not self.ale.game_over:
 
-                # Epsilon decreases over time
-                epsilon = self.compute_epsilon(frames_played)
+                game_time = self.memory.time[self.memory.count]
+                enough_frames = game_time >= 3
+
+                if enough_frames:
+                    current_state = self.memory.get_last_state()
+                    predicted_values = self.nnet.predict_rewards([current_state])
+                    print 'predict_rewards', predicted_values
 
                 # Some times random action is chosen
-                if random.uniform(0, 1) < epsilon:
+                U = random.uniform(0, 1)
+                # Epsilon decreases over time
+                epsilon = self.compute_epsilon(frames_played)
+                force_random = U < epsilon
+
+                if (not enough_frames) or force_random:
                     action = random.choice(range(self.number_of_actions))
                     print "chose randomly ", action
 
                 # Usually neural net chooses the best action
                 else:
+                    assert enough_frames
                     print "chose by neural net"
-                    action = self.nnet.predict_best_action([self.memory.get_last_state()])
+                    action = self.nnet.predict_best_action([current_state])
                     print action
 
                 # Make the move
