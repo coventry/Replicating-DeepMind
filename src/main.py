@@ -107,14 +107,56 @@ class Main:
                     print action
 
                 # Make the move
-                self.ale.move(action)
+                images = []
+                for i in range(4):
+                    # "the agent sees and selects actions on every kth
+                    # frame  instead  of  every frame,  and  its  last
+                    # action  is repeated  on  skipped frames.   Since
+                    # running  the  emulator   forward  for  one  step
+                    # requires much  less computation than  having the
+                    # agent  select an  action, this  technique allows
+                    # the  agent to  play roughly  k times  more games
+                    # without  significantly  increasing the  runtime.
+                    # We use k = 4 for all games except Space Invaders
+                    # where  we noticed  that using  k =  4 makes  the
+                    # lasers invisible because of  the period at which
+                    # they blink.   We used k  = 3 to make  the lasers
+                    # visible
+                    self.ale.move(action)
+                    # Store  the results  from the  last iteration  of the
+                    # chosen action.
+                    self.ale.store_step(action)
 
-                # Store new information to memory
-                self.ale.store_step(action)
+                    # Store new information to memory
+                    images.append(self.ale.next_image)
+                if len(set(images)) < len(images):
+                    # In breakout, if  the puck is lost  the next puck
+                    # isn't put in play until you hit the fire button.
+                    # Here I'm checking whether the board is frozen by
+                    # looking  for  identical  images  over  the  four
+                    # frames.
+                    self.ale.move(1)
+
+                # Really, the frames stored, but that is what we need,
+                # in order to keep things consistent.
+                frames_played += 1
 
                 # Start a training session
 
-                self.nnet.train(self.memory.get_minibatch(self.minibatch_size))
+                if (frames_played % self.minibatch_size) == 0:
+                    # Don't do any training  until we've got something
+                    # large  enough  to  avoid oversampling  from  the
+                    # history...  This  is still going to  over sample
+                    # eventually,  but it  is exactly  what the  paper
+                    # says to do... Hmm.
+                    print 'getting minibatch'
+                    minibatch = self.memory.get_minibatch(self.minibatch_size)
+                    print 'training net'
+                    self.nnet.train(minibatch)
+                    print 'dumping net...'
+                    savepath = savedir + ('%i.pickle' % frames_played)
+                    cPickle.dump([minibatch, self.nnet], open(savepath, 'w'))
+                    print 'done'
 
             # After "game over" increase the number of games played
             games_played += 1
