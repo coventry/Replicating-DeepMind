@@ -22,6 +22,9 @@ os.mkdir(savedir)
 class Main:
     # How many transitions to keep in memory?
     memory_size = 100000
+    # My  machine probably  can't  handle 10  000  000 transitions  IN
+    # MEMORY, but  that is the  number in the paper.   Compressing the
+    # images would probably work...
 
     # Memory itself
     memory = None
