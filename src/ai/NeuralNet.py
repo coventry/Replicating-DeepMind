@@ -72,44 +72,54 @@ class NeuralNet:
             + (self.layer_output.W ** 2).sum()
 
         #: define the cost function
-        cost = 0.0 * self.l1 + 0.0 * self.l2_sqr + self.layer_output.errors(y)
+        self.cost = 0.0 * self.l1 + 0.0 * self.l2_sqr + self.layer_output.errors(y)
+        self.cost_function = theano.function([x, y], [self.cost])
 
         #: define gradient calculation
-        grads = T.grad(cost, self.params)
+        self.grads = T.grad(self.cost, self.params)
 
         #: Define how much we need to change the parameter values
-        learning_rate = 0.0001
-        updates = []
-        for param_i, gparam_i in zip(self.params, grads):
-            updates.append((param_i, param_i - learning_rate * gparam_i))
+        self.learning_rate = T.scalar('lr')
+        self.updates = []
+        for param_i, gparam_i in zip(self.params, self.grads):
+            self.updates.append((param_i, param_i - self.learning_rate * gparam_i))
+        self.x = x
+        self.y = y
 
         #: we need another set of theano variables (other than x and y) to use in train and predict functions
         temp_x = T.ftensor4('temp_x')
         temp_y = T.fmatrix('temp_y')
 
         #: define the training operation as applying the updates calculated given temp_x and temp_y
-        self.train_model = theano.function(inputs=[temp_x, temp_y],
-                                           outputs=[cost],
-                                           updates=updates,
+        self.train_model = theano.function(inputs=[temp_x, temp_y,
+                                                   theano.Param(self.learning_rate, default=0.00001)],
+                                           outputs=[self.cost],
+                                           updates=self.updates,
                                            givens={
                                                x: temp_x,
-                                               y: temp_y})
+                                               y: temp_y},
+                                           name='train_model')
+
+        self.cost_clone = theano.clone(self.cost, replace=self.updates)
+        self.line_function = theano.function(
+            [x, y, self.learning_rate], [self.cost_clone])
 
         self.predict_rewards = theano.function(
             inputs=[temp_x],
             outputs=[self.layer_output.output],
             givens={
                 x: temp_x
-            })
-
+            },
+            name='predict_rewards')
 
         self.predict_rewards_and_cost = theano.function(
             inputs=[temp_x, temp_y],
-            outputs=[self.layer_output.output, cost],
+            outputs=[self.layer_output.output, self.cost],
             givens={
                 x: temp_x,
                 y: temp_y
-            })
+            },
+            name='predict_rewards_and_cost')
 
     def train(self, minibatch):
         """
