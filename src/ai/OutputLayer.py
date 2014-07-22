@@ -21,6 +21,7 @@ class OutputLayer:
 
         #: we need to limit the weight sizes because we might have many inputs to each node
         W_bound = -np.sqrt(6. / (n_in + n_nodes))
+        # I think the 6 can g outside the sqrt, here.
 
         #: Weight matrix (n_in x n_nodes)
         W_values = np.asarray(np.random.uniform(high=W_bound, low=-W_bound, size=(n_in, n_nodes)), dtype=theano.config.floatX)
