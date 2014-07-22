@@ -14,6 +14,10 @@ for direction in ['in', 'out']:
     if os.path.exists(path):
         os.remove(path)
 
+savedir = '/var/tmp/nets/'
+if os.path.exists(savedir):
+    os.rename(savedir, savedir[:-1] + '-' + str(time.time()))
+os.mkdir(savedir)
 
 class Main:
     # How many transitions to keep in memory?
