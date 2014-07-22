@@ -66,7 +66,11 @@ class MemoryD:
         "Game Over" screen
         """
         self.actions[self.count] = 100
-        self.rewards[self.count] = 100
+        # A reward  of 100 for finishing  the game?  Are we  trying to
+        # create a quitter??  Turns out  this doesn't matter too much,
+        # get_minibatch skips terminal entries, so the reward is never
+        # seen by the Q-function.
+        self.rewards[self.count] = -1000
 
     def get_minibatch(self, size):
         """
