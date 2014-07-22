@@ -7,6 +7,8 @@ import numpy as np
 from preprocessor import Preprocessor
 
 
+ale_prefix = os.path.expanduser('~/alien/ale_0.4.4/ale_0_4/')
+
 class ALE:
     actions = [np.uint8(0), np.uint8(1), np.uint8(3), np.uint8(4)]
     current_reward = 0
@@ -15,12 +17,13 @@ class ALE:
     memory = ""
     skip_frames = 4
     display_screen = "true"
-    game_ROM = '../libraries/ale/roms/breakout.bin'
+    game_ROM = os.path.join(ale_prefix, 'roms/breakout.bin')
     fin = ""
     fout = ""
     preprocessor = None
     
-    def __init__(self,  memory, display_screen="true", skip_frames=4, game_ROM='../libraries/ale/roms/breakout.bin'):
+    def __init__(self,  memory, display_screen="true", skip_frames=4,
+                 game_ROM=os.path.join(ale_prefix, 'roms/breakout.bin')):
         """
         Initialize ALE class. Creates the FIFO pipes, launches ./ale and does the "handshake" phase of communication
 
@@ -40,7 +43,8 @@ class ALE:
         os.system("mkfifo ale_fifo_in")
 
         #: launch ALE with appropriate commands in the background
-        command='./../libraries/ale/ale -max_num_episodes 0 -game_controller fifo_named -disable_colour_averaging true -run_length_encoding false -frame_skip '+str(self.skip_frames)+' -display_screen '+self.display_screen+" "+self.game_ROM+" &"
+        binary = os.path.join(ale_prefix, 'ale')
+        command=binary + ' -max_num_episodes 0 -game_controller fifo_named -disable_colour_averaging true -run_length_encoding false -frame_skip '+str(self.skip_frames)+' -display_screen '+self.display_screen+" "+self.game_ROM+" &"
         os.system(command)
 
         #: open communication with pipes
