@@ -138,18 +138,33 @@ class NeuralNet:
         @param minibatch: array of dictionaries, each dictionary contains
         one transition (prestate,action,reward,poststate)
         """
-
-        # XXX This is doing one update per minibatch element, which is not
-        # the way minibatches are supposed to work.
-
-        #: we have a new, better estimation for the Q-val of the action we chose, it is the sum of the reward
-        #  received on transition and the maximum of future rewards. Q-s for other actions remain the same.
-        for i, transition in enumerate(minibatch):
-            estimated_Q = self.predict_rewards([transition['prestate']])[0][0]
-            estimated_Q[transition['action']] = transition['reward'] + self.gamma \
-                                                * np.max(self.predict_rewards([transition['prestate']]))
-            #: knowing what estimated_Q looks like, we can train the model
-            self.train_model([transition['prestate']], [estimated_Q])
+        prestates = [t['prestate'] for t in minibatch]
+        initial_estimated_Q = self.predict_rewards(prestates)[0]
+        new_estimated_Q = initial_estimated_Q.copy()
+        post_eQ = self.predict_rewards([t['poststate'] for t in minibatch])[0]
+        actions = [t['action'] for t in minibatch]
+        rewards = np.array([t['reward'] for t in minibatch])
+        for row, (peQ, action, reward) in enumerate(zip(post_eQ, actions, rewards)):
+            new_estimated_Q[row, action] = reward + self.gamma * np.max(peQ)
+        initial_cost = self.cost_function(prestates, new_estimated_Q)
+        optimal_learning_rate = lambda: self.optimal_learning_rate(
+            prestates, new_estimated_Q,
+            self.learning_rates[-1] if self.learning_rates else self.actual_learning_rate)
+        if (len(self.learning_rates) % 50) == 0:
+            print 'computing optimal learning rate'
+            optimal_learning_rate()
+        else:
+            self.learning_rates.append(self.learning_rates[-1])
+        self.train_model(np.array(prestates), new_estimated_Q,
+                         self.learning_rates[-1])
+        final_cost = self.cost_function(prestates, new_estimated_Q)
+        final_estimated_Q = self.predict_rewards(prestates)[0]
+        print 'initial_cost', initial_cost, 'final_cost', final_cost, 'foo baz'
+        print 'current rewards', (final_estimated_Q - final_estimated_Q.min(axis=0)).mean(axis=0)
+        print 'current rewards absolute', final_estimated_Q
+        if final_cost > initial_cost:
+            print 'overstepped; computing current optimal learning rate'
+            optimal_learning_rate()
         if os.path.exists('/var/tmp/stop'):
             import pdb
             pdb.set_trace()
