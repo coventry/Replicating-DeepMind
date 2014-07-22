@@ -49,4 +49,6 @@ class OutputLayer:
         if y.ndim != self.output.ndim:
             raise TypeError('y should have the same shape as self.output', ('y', y.type, 'output', self.output.type))
 
-        return T.mean(np.abs(self.output-y))
+        # Pretty  sure we  want  the square  of  the difference,  here
+        # (eq. 2 in the paper.)
+        return T.mean((self.output-y)**2)
