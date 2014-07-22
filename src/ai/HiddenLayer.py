@@ -22,14 +22,18 @@ class HiddenLayer:
 
         #: we need to limit the weight sizes because we might have many inputs to each node
         W_bound = np.sqrt(6. /(n_in+n_nodes))
+        # I think  the 6 can go  outside the sqrt, here.   Also, since
+        # this is a ReLU activation, there is no theoretical reason to
+        # have  this bound.   Perhaps it  would be  better to  replace
+        # these initializations with samples from a positive range...
 
         #: Weight matrix (n_in * n_nodes)
         W_values = np.asarray(np.random.uniform(high=W_bound, low=-W_bound, size=(n_in, n_nodes)), dtype=theano.config.floatX)
-        self.W = theano.shared(value=W_values, name='W', borrow=True)
+        self.W = theano.shared(value=W_values, name='Hidden_W', borrow=True)
 
         #: Bias term
         b_values = np.zeros((n_nodes,), dtype=theano.config.floatX)
-        self.b = theano.shared(value=b_values, name='b', borrow=True)
+        self.b = theano.shared(value=b_values, name='Hidden_b', borrow=True)
 
         self.threshold = 0
         #: Output is rectified

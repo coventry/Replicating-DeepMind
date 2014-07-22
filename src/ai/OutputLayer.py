@@ -24,11 +24,11 @@ class OutputLayer:
 
         #: Weight matrix (n_in x n_nodes)
         W_values = np.asarray(np.random.uniform(high=W_bound, low=-W_bound, size=(n_in, n_nodes)), dtype=theano.config.floatX)
-        self.W = theano.shared(value=W_values, name='W', borrow=True)
+        self.W = theano.shared(value=W_values, name='Output_W', borrow=True)
 
         #: Bias term
         b_values = np.zeros((n_nodes,), dtype=theano.config.floatX)
-        self.b = theano.shared(value=b_values, name='b', borrow=True)
+        self.b = theano.shared(value=b_values, name='Output_b', borrow=True)
 
         #: output layer does not use linear rectifier
         lin_output = T.dot(input_from_previous_layer, self.W) + self.b
