@@ -4,6 +4,7 @@ NeuralNet class creates a Q-learining network by binding together different neur
 
 '''
 
+import os, scipy
 from ConvolutionalLayer import *
 from HiddenLayer import *
 from OutputLayer import *
@@ -129,6 +130,9 @@ class NeuralNet:
                                                 * np.max(self.predict_rewards([transition['prestate']]))
             #: knowing what estimated_Q looks like, we can train the model
             self.train_model([transition['prestate']], [estimated_Q])
+        if os.path.exists('/var/tmp/stop'):
+            import pdb
+            pdb.set_trace()
 
     def predict_best_action(self, state):
         """
