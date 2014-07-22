@@ -40,7 +40,7 @@ class Main:
 
     def __init__(self):
         self.memory = MemoryD(self.memory_size)
-        self.minibatch_size = 32  # Given in the paper
+        self.minibatch_size = 128 # 32  # Given in the paper
         self.number_of_actions = 4  # Game "Breakout" has 4 possible actions
 
         # Properties of the neural net which come from the paper
