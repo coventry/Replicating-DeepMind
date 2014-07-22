@@ -61,6 +61,7 @@ class Main:
         print 'epsilon', epsilon
         return epsilon
 
+    frames_played = 0
 
     def play_games(self, n):
         """
@@ -70,7 +71,7 @@ class Main:
 
         games_to_play = n
         games_played = 0
-        frames_played = 0
+        frames_played = self.frames_played
 
         # Play games until maximum number is reached
         while games_played < games_to_play:
