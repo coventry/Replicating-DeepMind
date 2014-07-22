@@ -121,6 +121,16 @@ class NeuralNet:
             },
             name='predict_rewards_and_cost')
 
+    actual_learning_rate = 1e-5
+    learning_rates = []
+
+    def optimal_learning_rate(self, prestates, new_estimated_Q, lr):
+        objective = lambda lr: self.line_function(np.array(prestates), new_estimated_Q, float(lr))[0]
+        res = scipy.optimize.minimize(objective, 0, method='Nelder-Mead', options={'xtol': 1e-1})
+        print 'optimization result'
+        print res
+        self.learning_rates.append(float(res.x))
+
     def train(self, minibatch):
         """
         Train function that transforms (state,action,reward,state) into (input, expected_output) for neural net
