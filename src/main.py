@@ -114,4 +114,4 @@ class Main:
 
 if __name__ == '__main__':
     m = Main()
-    m.play_games(1)
+    m.play_games(1000)
