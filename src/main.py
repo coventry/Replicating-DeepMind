@@ -138,7 +138,7 @@ class Main:
                     # isn't put in play until you hit the fire button.
                     # Here I'm checking whether the board is frozen by
                     # looking  for  identical  images  over  the  four
-                    # frames.
+                    # frames, and hitting 'fire' if I find any.
                     self.ale.move(1)
 
                 # Start a training session
