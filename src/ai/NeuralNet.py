@@ -161,7 +161,9 @@ class NeuralNet:
         final_estimated_Q = self.predict_rewards(prestates)[0]
         print 'initial_cost', initial_cost, 'final_cost', final_cost, 'foo baz'
         print 'current rewards', (final_estimated_Q - final_estimated_Q.min(axis=0)).mean(axis=0)
-        print 'current rewards absolute', final_estimated_Q
+        print 'current rewards absolute'
+        for r, a, s in sorted(zip(rewards, actions, map(list, final_estimated_Q))):
+            print r, a, s
         if final_cost > initial_cost:
             print 'overstepped; computing current optimal learning rate'
             optimal_learning_rate()
