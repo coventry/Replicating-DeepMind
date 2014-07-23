@@ -125,9 +125,11 @@ class Main:
                     # they blink.   We used k  = 3 to make  the lasers
                     # visible
                     self.ale.move(action)
+
                     # Store  the results  from the  last iteration  of the
                     # chosen action.
                     self.ale.store_step(action)
+                    frames_played += 1
 
                     # Store new information to memory
                     images.append(self.ale.next_image)
@@ -138,10 +140,6 @@ class Main:
                     # looking  for  identical  images  over  the  four
                     # frames.
                     self.ale.move(1)
-
-                # Really, the frames stored, but that is what we need,
-                # in order to keep things consistent.
-                frames_played += 1
 
                 # Start a training session
 
