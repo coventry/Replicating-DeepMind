@@ -109,7 +109,7 @@ class Main:
                     print action
 
                 # Make the move
-                images = []
+                images = [] # For detecting static positions
                 for i in range(4):
                     # "the agent sees and selects actions on every kth
                     # frame  instead  of  every frame,  and  its  last
