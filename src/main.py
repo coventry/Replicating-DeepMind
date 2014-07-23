@@ -62,6 +62,7 @@ class Main:
         return epsilon
 
     frames_played = 0
+    show_rewards = False
 
     def play_games(self, n):
         """
@@ -86,8 +87,9 @@ class Main:
 
                 if enough_frames:
                     current_state = self.memory.get_last_state()
-                    predicted_values = self.nnet.predict_rewards([current_state])
-                    print 'predict_rewards', predicted_values
+                    if self.show_rewards:
+                        predicted_values = self.nnet.predict_rewards([current_state])
+                        print 'predict_rewards', predicted_values
 
                 # Some times random action is chosen
                 U = random.uniform(0, 1)
