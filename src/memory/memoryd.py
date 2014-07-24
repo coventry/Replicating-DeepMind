@@ -60,23 +60,21 @@ class MemoryD:
         """
         next_count = self.next_count(self.count)
         self.actions[self.count] = action
-        self.rewards[self.count] = reward
+        # Since the scale of scores  varies greatly from game to game,
+        # we  ﬁxed all  positive  rewards  to be  1  and all  negative
+        # rewards to be −1, leaving 0 rewards unchanged.
+        self.rewards[self.count] = np.sign(reward)
         self.time[next_count] = self.time[self.count] + 1
         self.screens[next_count] = next_screen
         self.count = next_count
 
     def add_last(self):
         """
-        When the game ends we fill memory for the current screen with corresponding
-        values. It is useful to think that at this time moment agent is looking at
-        "Game Over" screen
+        When the game ends, there is  no need to record it, but it
+        should be penalized.
         """
-        self.actions[self.count] = 100
-        # A reward  of 100 for finishing  the game?  Are we  trying to
-        # create a quitter??  Turns out  this doesn't matter too much,
-        # get_minibatch skips terminal entries, so the reward is never
-        # seen by the Q-function.
-        self.rewards[self.count] = -1000
+        # Penalize the last action
+        self.rewards[self.count] -= 1
 
     def get_minibatch(self, size):
         """
@@ -91,7 +89,7 @@ class MemoryD:
         while len(transitions) < size:
             i = random.randint(max(0, self.count - self.n/10.),
                                self.count - 1)
-            if ((self.actions[i] != 100) and (self.time[i] >= 3)):
+            if self.time[i] >= 3:
                 transitions.append({'prestate': self.get_state(i),
                                     'action': self.actions[i],
                                     'reward': self.rewards[i],
