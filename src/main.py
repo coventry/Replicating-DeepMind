@@ -73,6 +73,7 @@ class Main:
         games_to_play = n
         games_played = 0
         frames_played = self.frames_played
+        moves_per_choice = 4
 
         # Play games until maximum number is reached
         while games_played < games_to_play:
@@ -110,7 +111,7 @@ class Main:
 
                 # Make the move
                 images = [] # For detecting static positions
-                for i in range(4):
+                for i in range(moves_per_choice):
                     # "the agent sees and selects actions on every kth
                     # frame  instead  of  every frame,  and  its  last
                     # action  is repeated  on  skipped frames.   Since
@@ -143,6 +144,8 @@ class Main:
 
                 # Start a training session
 
+                assert self.frames_played % moves_per_choice == 0
+                assert self.minibatch_size % moves_per_choice == 0
                 if (frames_played % self.minibatch_size) == 0:
                     # Don't do any training  until we've got something
                     # large  enough  to  avoid oversampling  from  the
