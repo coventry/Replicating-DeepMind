@@ -87,8 +87,7 @@ class MemoryD:
 
         #: Pick random n indices and save dictionary if not terminal state
         while len(transitions) < size:
-            i = random.randint(max(0, self.count - self.n/10.),
-                               self.count - 1)
+            i = random.randint(0, self.count - 1)
             if self.time[i] >= 3:
                 transitions.append({'prestate': self.get_state(i),
                                     'action': self.actions[i],
