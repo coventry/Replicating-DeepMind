@@ -145,9 +145,12 @@ class NeuralNet:
         post_eQ = [self.predict_rewards([s])[0] if s is not None else None
                    for s in poststates]
         actions = [t['action'] for t in minibatch]
+        game_end_ps = [t['game_end'] for t in minibatch]
         rewards = np.array([t['reward'] for t in minibatch])
-        for row, (peQ, action, reward) in enumerate(zip(post_eQ, actions, rewards)):
-            new_estimated_Q[row, action] = reward + self.gamma * np.max(peQ)
+        for row, (peQ, action, reward, game_end) in enumerate(
+            zip(post_eQ, actions, rewards, game_end_ps)):
+            new_estimated_Q[row, action] = reward + (
+                0 if game_end else self.gamma * np.max(peQ))
         initial_cost = self.cost_function(prestates, new_estimated_Q)
         optimal_learning_rate = lambda: self.optimal_learning_rate(
             prestates, new_estimated_Q,
