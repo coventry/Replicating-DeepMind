@@ -7,7 +7,6 @@ Memory stores game data and provides means work with it
 import numpy as np
 import random
 
-
 class MemoryD:
 
     #: N x 84 x 84 matrix, where N is the number of game steps we want to keep
@@ -61,8 +60,8 @@ class MemoryD:
         next_count = self.next_count(self.count)
         self.actions[self.count] = action
         # Since the scale of scores  varies greatly from game to game,
-        # we  ﬁxed all  positive  rewards  to be  1  and all  negative
-        # rewards to be −1, leaving 0 rewards unchanged.
+        # we fixed all positive reward to be 1 and all negative
+        # rewards to be  -1, leaving 0 rewards unchanged.
         self.rewards[self.count] = np.sign(reward)
         self.time[next_count] = self.time[self.count] + 1
         self.screens[next_count] = next_screen
