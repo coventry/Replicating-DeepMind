@@ -141,7 +141,9 @@ class NeuralNet:
         prestates = [t['prestate'] for t in minibatch]
         initial_estimated_Q = self.predict_rewards(prestates)[0]
         new_estimated_Q = initial_estimated_Q.copy()
-        post_eQ = self.predict_rewards([t['poststate'] for t in minibatch])[0]
+        poststates = [t['poststate'] for t in minibatch]
+        post_eQ = [self.predict_rewards([s])[0] if s is not None else None
+                   for s in poststates]
         actions = [t['action'] for t in minibatch]
         rewards = np.array([t['reward'] for t in minibatch])
         for row, (peQ, action, reward) in enumerate(zip(post_eQ, actions, rewards)):
