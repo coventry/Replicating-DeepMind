@@ -129,7 +129,7 @@ class NeuralNet:
         res = scipy.optimize.minimize(objective, 0, method='Nelder-Mead', options={'xtol': 1e-1})
         print 'optimization result'
         print res
-        self.learning_rates.append(float(res.x))
+        self.learning_rates.append(max(1e-6, float(res.x)))
 
     def train(self, minibatch):
         """
