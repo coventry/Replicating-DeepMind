@@ -11,16 +11,6 @@ ale_prefix = os.path.expanduser('~/alien/ale_0.4.4/ale_0_4/')
 
 class ALE:
     actions = [np.uint8(0), np.uint8(1), np.uint8(3), np.uint8(4)]
-    current_reward = 0
-    next_screen = ""
-    game_over = False
-    memory = ""
-    skip_frames = 4
-    display_screen = "true"
-    game_ROM = os.path.join(ale_prefix, 'roms/breakout.bin')
-    fin = ""
-    fout = ""
-    preprocessor = None
     
     def __init__(self,  memory, display_screen="true", skip_frames=4,
                  game_ROM=os.path.join(ale_prefix, 'roms/breakout.bin')):
